@@ -1,9 +1,8 @@
 import React from 'react';
-
-import Collapsible from 'react-collapsible';
 import Checkboxes, { Collection as CollectionProps } from '@/components/Checkboxes/Checkboxes';
 import ClickableListItem from './ClickableListItem';
 import Times from '../Icons/Times';
+import Accordion from '../Accordion';
 import { ADVANCED_SETTINGS, HEADER_SETTINGS, QUICK_SETTINGS, RESET_SETTING } from './ControlSettings';
 import { AlignLeftIcon, MinusIcon, PlusIcon, SplitViewIcon, GlobeIcon, LarivaarIcon, MicrophoneIcon, SolidArrowRight, DarkModeIcon, VishraamIcon, SteekIcon, AkhandPaathIcon, AutoPlayIcon, LarivaarAssistIcon, AlignCenterIcon, ParagraphIcon, VishraamStyleIcon, } from "../Icons/CustomIcons";
 import {
@@ -12,7 +11,6 @@ import {
 } from '../../constants';
 import { clearVisraamClass } from '@/util';
 import { useOnClickOutside } from "@/hooks";
-
 
 const ControlsSettings = (props: any) => {
   const wrapperRef = React.useRef(null);
@@ -126,7 +124,7 @@ const ControlsSettings = (props: any) => {
         )
     }
   }
-  const bakeSettings = (settingsObj: any) => {
+  const bakeSettings = (settingsObj: any, elementIndex: number) => {
     switch (settingsObj.type) {
       case 'header':
         return (
@@ -136,21 +134,15 @@ const ControlsSettings = (props: any) => {
           </>
         )
       case 'collapsible_item':
-        return (
-          <Collapsible
-            trigger={(
-              <button className="settings-item active-setting">
-                <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
-                <span className="settings-text">{settingsObj.label}</span>
-                <div className="flex-spacer" />
-                <span className="settings-chevron-icon">
-                  <SolidArrowRight />
-                </span>
-              </button>
-            )}>
-            <Checkboxes collections={settingsObj.collections} />
-          </Collapsible>
-        )
+        return <Accordion
+          customStyles
+          title={(<span className="settings-item active-setting">
+            <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
+            <span className="settings-text">{settingsObj.label}</span>
+          </span>)}
+          content={<Checkboxes collections={settingsObj.collections} />}
+          index={elementIndex}
+        />
       case 'icon-toggle':
         return (
           <>
@@ -185,21 +177,15 @@ const ControlsSettings = (props: any) => {
           </button>
         )
       case 'collapsible_formatting_item':
-        return (
-          <Collapsible
-            trigger={(
-              <div className="settings-item active-setting">
-                <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
-                <span className="settings-text">{settingsObj.label}</span>
-                <div className="flex-spacer" />
-                <span className="settings-chevron-icon">
-                  <SolidArrowRight />
-                </span>
-              </div>
-            )}>
-            <ClickableListItem controlsList={settingsObj} />
-          </Collapsible>
-        )
+        return <Accordion
+          customStyles
+          title={(<div className="settings-item active-setting">
+            <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
+            <span className="settings-text">{settingsObj.label}</span>
+          </div>)}
+          content={<ClickableListItem controlsList={settingsObj} />}
+          index={elementIndex}
+        />
       case 'label-options':
         return (
           <div className="settings-item">
@@ -268,7 +254,7 @@ const ControlsSettings = (props: any) => {
                 data-cy={element.label}
                 key={`settings-${i}`}
                 className={`settings-header ${element.type}`}>
-                {bakeSettings(element)}
+                {bakeSettings(element, i)}
               </div>
             )
           }
@@ -283,7 +269,7 @@ const ControlsSettings = (props: any) => {
                 data-cy={element.label}
                 key={`settings-${i}`}
                 className={`${element.type}`}>
-                {bakeSettings(element)}
+                {bakeSettings(element, i)}
               </div>
             )
           }
@@ -303,7 +289,7 @@ const ControlsSettings = (props: any) => {
                     data-cy={element.label}
                     key={`settings-${i}`}
                     className={`settings-item font-item ${element.type}`}>
-                    {bakeSettings(element)}
+                    {bakeSettings(element, i)}
                   </div>
                 )
               }

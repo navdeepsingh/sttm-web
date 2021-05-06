@@ -61,11 +61,6 @@ const MultipleShabadsDisplay: React.FC<IMultipleShabadsDisplayProps> = ({
     urlHistory.push(toMultipleShabadsURL({ shabadData }));
   }
 
-  useEffect(() => {
-    showMultiViewPanel && wrapperRef.current.focus();
-    window.scrollTo(0, 0);
-  }, [wrapperRef, showMultiViewPanel]);
-
   // Update Local State {sortableState} after shabads get Updated
   useEffect(() => {
     setSortableState(multipleShabads)
@@ -75,11 +70,14 @@ const MultipleShabadsDisplay: React.FC<IMultipleShabadsDisplayProps> = ({
     }
   }, [multipleShabads])
 
+  useEffect(() => {
+    showMultiViewPanel && wrapperRef.current.focus();
+    window.scrollTo(0, 0);
+  }, [wrapperRef, showMultiViewPanel]);
+
   return (
     <div className="multiple-shabads-display" ref={wrapperRef} tabIndex="-1" role="dialog" data-testid="multi-view">
       <div className={`multiple-shabads-display--wrapper ${showMultiViewPanel ? 'enable' : ''}`}>
-        <button title="Close" className="close toast-notification-close-button" onClick={() => { setMultiViewPanel(false) }}>×</button>
-
         <div className="multiple-shabads-display--header">
           <h3>{TEXTS.MULTIPLE_SHABADS_HEADING}</h3>
           <p>{TEXTS.MULTIPLE_SHABADS_INTRO}</p>
@@ -101,6 +99,7 @@ const MultipleShabadsDisplay: React.FC<IMultipleShabadsDisplayProps> = ({
                 title="Remove"
                 className="remove"
                 data-id={id}
+                data-cy="delete-shabad"
                 onClick={onRemove}>-</button>
             </li>
           ))}
@@ -114,6 +113,8 @@ const MultipleShabadsDisplay: React.FC<IMultipleShabadsDisplayProps> = ({
           <button className="btn btn-secondary" onClick={onClear}>Clear</button>
           <button className="btn btn-primary" disabled={sortableState.length === 0} onClick={handleDisplayShabads}>Display</button>
         </div>
+
+        <button title="Close" className="close" onClick={() => { setMultiViewPanel(false) }}>×</button>
       </div>
     </div>
   )
