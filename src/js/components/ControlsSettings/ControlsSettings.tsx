@@ -4,13 +4,14 @@ import ClickableListItem from './ClickableListItem';
 import Times from '../Icons/Times';
 import Accordion from '../Accordion';
 import { ADVANCED_SETTINGS, HEADER_SETTINGS, QUICK_SETTINGS, RESET_SETTING } from './ControlSettings';
-import { AlignLeftIcon, MinusIcon, PlusIcon, SplitViewIcon, GlobeIcon, LarivaarIcon, MicrophoneIcon, SolidArrowRight, DarkModeIcon, VishraamIcon, SteekIcon, AkhandPaathIcon, AutoPlayIcon, LarivaarAssistIcon, AlignCenterIcon, ParagraphIcon, VishraamStyleIcon, } from "../Icons/CustomIcons";
+import { AlignLeftIcon, MinusIcon, PlusIcon, SplitViewIcon, GlobeIcon, LarivaarIcon, DarkModeIcon, VishraamIcon, SteekIcon, AkhandPaathIcon, AutoPlayIcon, LarivaarAssistIcon, AlignCenterIcon, ParagraphIcon, VishraamStyleIcon, } from "../Icons/CustomIcons";
 import {
   FONT_OPTIONS,
   VISRAAM,
 } from '../../constants';
 import { clearVisraamClass } from '@/util';
 import { useEscapeKeyEventHandler, useOnClickOutside } from "@/hooks";
+import { TalkIcon } from '../Icons/TalkIcon';
 
 
 const ControlsSettings = (props: any) => {
@@ -58,7 +59,7 @@ const ControlsSettings = (props: any) => {
         )
       case 'Transliteration':
         return (
-          <MicrophoneIcon />
+          <TalkIcon />
         )
       case 'Translation':
         return (
