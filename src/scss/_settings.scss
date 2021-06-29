@@ -3,20 +3,35 @@ $panel-width-900: 35vw;
 $panel-width-560: 65vw;
 
 .settings {
+  $transform-width: $panel-width;
+
+  @media screen and (max-width: 900px) {
+    $transform-width: $panel-width-900;
+  }
+
+  @media screen and (max-width: 560px) {
+    $transform-width: $panel-width-560;
+  }
+
   &-panel {
     background: $sttm-pure-white;
     box-shadow: 0 0 12px -4px $sttm-black;
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow-x: hidden;
+    opacity: 0;
     position: fixed;
     right: 0;
     top: 0;
+    transform: translateX(100%);
     transform-origin: top right;
     transition: 0.3s all ease-in-out;
     width: $panel-width;
     z-index: 100;
+
+    [role="dialog"] {
+      overflow-y: auto;
+    }
 
     .dark-mode & {
       background-color: $sttm-lighter-black;
@@ -36,21 +51,6 @@ $panel-width-560: 65vw;
   &-show {
     opacity: 1;
     transform: translateX(0);
-  }
-
-  &-hide {
-    $transform-width: $panel-width;
-
-    @media screen and (max-width: 900px) {
-      $transform-width: $panel-width-900;
-    }
-
-    @media screen and (max-width: 560px) {
-      $transform-width: $panel-width-560;
-    }
-
-    opacity: 0;
-    transform: translateX($transform-width);
   }
 
   &-header {
@@ -164,7 +164,7 @@ $panel-width-560: 65vw;
     background-color: #01669b;
     border: none;
     border-radius: 5px;
-    color: #fafafa;
+    color: $sttm-white;
     font-weight: 900;
     height: 40px;
     padding-left: 10px;
@@ -179,6 +179,8 @@ $panel-width-560: 65vw;
 
   &-text {
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 900;
     margin-left: 6px;
 
     &:hover {
@@ -270,13 +272,6 @@ $panel-width-560: 65vw;
 }
 
 .multi-view {
-  align-items: center;
-  color: $sttm-grey;
-  display: inline-flex;
-  flex-wrap: nowrap;
-  font-weight: 700;
-  justify-content: center;
-
   .search-form & {
     span {
       padding-left: 0.2em;
@@ -291,10 +286,6 @@ $panel-width-560: 65vw;
 
 .settings-chevron-icon svg {
   transition: transform 200ms ease;
-}
-
-.is-open > .settings-item > .settings-chevron-icon svg {
-  transform: rotate(0.25turn);
 }
 
 .pt-0 {
@@ -332,10 +323,21 @@ $panel-width-560: 65vw;
     list-style: none;
   }
 
+  &-child-container {
+    grid-column: 1/-1;
+    list-style: none;
+
+    .item {
+      align-items: center;
+      display: flex;
+    }
+  }
+
   &-item {
     align-items: center;
-    display: flex;
-    height: 30px;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    min-height: 30px;
 
     &-label {
       margin-left: 10px;

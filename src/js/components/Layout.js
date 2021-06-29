@@ -16,7 +16,7 @@ import { setOnlineMode } from '../features/actions';
 import { FloatingActions } from './FloatingActions';
 import MultipleShabadsDisplay from './MultipleShabadsDisplay';
 
-import { addVisraamClass, isShowFullscreenRoute, isShowAutoScrollRoute } from '../util';
+import { addVisraamClass, isShowFullscreenRoute, isShowAutoScrollRoute, isShowSettingsRoute } from '../util';
 
 class Layout extends React.PureComponent {
   static defaultProps = {
@@ -89,6 +89,7 @@ class Layout extends React.PureComponent {
 
     const isShowFullScreen = isShowFullscreenRoute(pathname);
     const isShowAutoScroll = isShowAutoScrollRoute(pathname) && autoScrollMode;
+    const isShowSettings = isShowSettingsRoute(location.pathname)
 
     if (window !== undefined) {
       const $metaColor = document.querySelector('meta[name="theme-color"]');
@@ -119,13 +120,13 @@ class Layout extends React.PureComponent {
               children
           )}
         </div>
-
         <MultipleShabadsDisplay />  
 
         <FloatingActions
           isShowAutoScroll={isShowAutoScroll}
           isShowFullScreen={isShowFullScreen}
-          isShowScrollToTop={this.state.showScrollToTop} />
+          isShowScrollToTop={this.state.showScrollToTop} 
+          isShowSettings={isShowSettings} />
 
       </React.Fragment>
     ) : (

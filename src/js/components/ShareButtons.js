@@ -4,15 +4,17 @@ import PropTypes from 'prop-types';
 import { showToast, copyToClipboard, shortenURL, isKeyExists, multiviewFormattedShabad } from '../util';
 import { TEXTS } from '../constants';
 import { clickEvent, ACTIONS } from '../util/analytics';
+import { delay, isFalsy } from '../util/misc';
 import ShareIcon from './Icons/Share';
 import EmbedIcon from './Icons/Embed';
 import CopyAllIcon from './Icons/CopyAll';
 import WhatsAppIcon from './Icons/WhatsApp';
 import ClipboardIcon from './Icons/Clipboard';
 import PrinterIcon from './Icons/Printer';
+import { RandomIcon } from './Icons/RandomIcon';
 import { GearsIcon } from './Icons/CustomIcons';
 import MultiViewButton from '@/components/MultiViewButton';
-import { AddShabadButton } from './AddShabadButton';
+import { ShabadButtonWrapper } from './ShabadButtonWrapper';
 
 const handleWhatsapp = () => {
   clickEvent({ action: ACTIONS.SHARE, label: 'whatsapp' });
@@ -35,17 +37,18 @@ const copyShortUrl = () =>
     )
     .catch(() => showToast(TEXTS.COPY_FAILURE));
 
-export const supportedMedia = ['addShabad', 'multiView', 'settings', 'print', 'copyAll', 'embed', 'whatsapp', 'copy'];
+export const supportedMedia = ['addShabad', 'multiView', 'random', 'settings', 'print', 'copyAll', 'embed', 'whatsapp', 'copy'];
 
 class ShareButtons extends React.PureComponent {
   constructor(props) {
     super()
     this.formattedShabad = {}
-    const { highlight, gurbani } = props;    
-    if (gurbani !== undefined) {
-      const selectedShabad = highlight ? gurbani?.find(({verseId}) => verseId === highlight) : gurbani[0]
+    this.onClickSettings = this.onClickSettings.bind(this);
+    const { highlight, gurbani } = props;
+    if (!isFalsy(gurbani) && gurbani.length) {
+      const selectedShabad = highlight ? (gurbani?.find(({ verseId }) => verseId === highlight) ?? gurbani[0]) : gurbani[0]
       this.formattedShabad = multiviewFormattedShabad(selectedShabad)
-    }    
+    }
   }
   static defaultProps = {
     media: ['whatsapp', 'copy'],
@@ -57,7 +60,8 @@ class ShareButtons extends React.PureComponent {
     onEmbedClick: PropTypes.func,
     onCopyAllClick: PropTypes.func,
     toggleSettingsPanel: PropTypes.func,
-    settingIdRef: PropTypes.object,
+    closeMultiViewPanel: PropTypes.func,
+    showMultiViewPanel: PropTypes.bool,
     highlight: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number
@@ -77,12 +81,23 @@ class ShareButtons extends React.PureComponent {
     });
   };
 
+  onClickSettings(e) {
+    e.preventDefault();
+    const { toggleSettingsPanel, closeMultiViewPanel, showMultiViewPanel } = this.props
+    if (showMultiViewPanel) {
+      closeMultiViewPanel()
+      delay(600).then(() => toggleSettingsPanel())
+      return
+    }
+    toggleSettingsPanel()
+  }
+
   componentWillUnmount() {
     this.formattedShabad = {}
   }
 
   render() {
-    const { media, onEmbedClick, onCopyAllClick, toggleSettingsPanel, settingIdRef, pageType } = this.props;
+    const { media, onEmbedClick, onCopyAllClick } = this.props;
 
     if (media.length === 0) {
       return null;
@@ -137,9 +152,9 @@ class ShareButtons extends React.PureComponent {
       ),
       settings: (
         <li key={5}>
-          <button id="settings-icon" ref={settingIdRef} onClick={toggleSettingsPanel}>
+          <button id="settings-icon" onClick={this.onClickSettings}>
             <GearsIcon />
-            <span className="show-on-desktop settings-text-desktop">Settings</span>
+            <span className="show-on-desktop">Display</span>
           </button>
         </li>
       ),
@@ -149,13 +164,21 @@ class ShareButtons extends React.PureComponent {
         </li>
       ),
       addShabad: (
-        <li key={7}>  
+        <li key={7}>
           {
             isKeyExists(this.formattedShabad, 'shabadId')
-            && (<AddShabadButton shabad={this.formattedShabad} />)
-          }          
+            && (<ShabadButtonWrapper shabad={this.formattedShabad} />)
+          }
         </li>
-      )
+      ),
+      random: (
+        <li key={8}>
+          <button onClick={() => window.location.href = '/random'}>
+            <RandomIcon />
+            <span className="show-on-desktop">Random</span>
+          </button>
+        </li>
+      ),
     };
 
     if (window !== undefined && 'share' in window.navigator) {

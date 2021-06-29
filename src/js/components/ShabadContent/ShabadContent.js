@@ -67,12 +67,13 @@ class Shabad extends React.PureComponent {
    * @memberof Shabad
    */
   static propTypes = {
-    gurbani: PropTypes.array.isRequired,
+    gurbani: PropTypes.array,
     highlight: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number
     ]),
     type: PropTypes.oneOf(['shabad', 'ang', 'hukamnama', 'sync']).isRequired,
+    hideAddButton: PropTypes.bool,
     info: PropTypes.object.isRequired,
     nav: PropTypes.shape({
       previous: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -104,6 +105,7 @@ class Shabad extends React.PureComponent {
     showFullScreen: PropTypes.bool,
     paragraphMode: PropTypes.bool,
     sgBaaniLength: PropTypes.string,
+    fullScreenMode: PropTypes.bool,
   };
 
   constructor(props) {
@@ -120,6 +122,7 @@ class Shabad extends React.PureComponent {
         nav,
         pages,
         sgBaaniLength,
+        fullScreenMode,
         ...baniProps
       },
       handleEmbed,
@@ -134,6 +137,7 @@ class Shabad extends React.PureComponent {
       translationLanguages,
       transliterationLanguages,
       unicode,
+      hideAddButton = true,
     } = baniProps;
     if (random) {
       return <Redirect to={`/shabad?id=${getShabadId(info)}`} />;
@@ -143,9 +147,9 @@ class Shabad extends React.PureComponent {
     const isAmritKeertanRoute = location.pathname.includes('amrit-keertan');
     const isParagraphMode = paragraphMode && isSundarGutkaRoute;
     const isShowFooterNav = this.props.hideMeta === false && !isMultiPage;
-    const isShowMetaData = this.props.hideMeta === false;
+    const isShowMetaData = this.props.hideMeta === false && !fullScreenMode;
     const isShowControls = this.props.hideControls === false;
-    const isShowRelatedShabads = !isAmritKeertanRoute && !isSundarGutkaRoute;
+    const isShowRelatedShabads = !isAmritKeertanRoute && !isSundarGutkaRoute && !fullScreenMode;
 
     return (
       <GlobalHotKeys
@@ -157,7 +161,8 @@ class Shabad extends React.PureComponent {
           {isShowControls && (
             <Controls
               media={
-                ['shabad', 'hukamnama', 'ang'].includes(type)
+                hideAddButton ? supportedMedia.filter(m => (m !== 'addShabad' && m !== 'random'))
+                : ['shabad', 'hukamnama', 'ang'].includes(type)
                   ? supportedMedia
                   : supportedMedia.filter(
                     (m) => [

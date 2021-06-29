@@ -32,6 +32,7 @@ class Header extends React.PureComponent {
     isHome: PropTypes.bool,
     isController: PropTypes.bool,
     isAng: PropTypes.bool,
+    fullScreenMode: PropTypes.bool,
     location: PropTypes.shape({
       search: PropTypes.string,
     }),
@@ -76,11 +77,15 @@ class Header extends React.PureComponent {
 
   render() {
     const {
-      props: { defaultQuery, isHome, isAng, isController },
+      props: { defaultQuery, isHome, isAng, fullScreenMode, isController },
       state: { showDoodle, doodleData },
       onFormSubmit,
       handleFormSubmit,
     } = this;
+
+    if (fullScreenMode) {
+      return null;
+    }
 
     const {
       source: defaultSource = null,
@@ -94,7 +99,7 @@ class Header extends React.PureComponent {
       <div className="top-bar no-select" id="controller-bar">
         <div className="top-bar-wrapper row controller-header">
           <div className="top-bar-title">
-            <Link id="sync-logo" to="/">back to home</Link>
+            <Link id="sync-logo" to="/" aria-label="back to home" />
             <span className="logo-text"><span className="bolder">Bani</span> Controller</span>
           </div>
           <div className="responsive-menu">
@@ -110,26 +115,7 @@ class Header extends React.PureComponent {
 
     return (
       <div id="nav-bar" className={`top-bar no-select ${isHome ? 'top-bar-naked' : ''}`}>
-        {/* <ControlsSettings {...this.props} /> */}
-        <div className="top-bar-wrapper row">
-          {!isHome && (
-            <>
-              <div className="top-bar-title">
-                {showDoodle ?
-                  (<>
-                    <Link to="/" title={doodleData['Description']} className="doodle-link icon"
-                      style={{ backgroundImage: `url(${doodleData['ImageSquare']}) ` }}>
-                      {BACK_TO_HOME}
-                    </Link>
-                    <Link to="/" title={doodleData['Description']} className="doodle-link bigger-image"
-                      style={{ backgroundImage: `url(${doodleData['Image']}) ` }}>
-                      {BACK_TO_HOME}
-                    </Link>
-                  </>) :
-                  (<Link to="/" className="transparent-color">{BACK_TO_HOME}</Link>)
-                }
-              </div>
-            </>)}
+        <div className="top-bar-wrapper row">          
           <SearchForm
             key={key}
             defaultQuery={defaultQuery && decodeURIComponent(defaultQuery)}
@@ -169,6 +155,21 @@ class Header extends React.PureComponent {
 
               return (
                 <React.Fragment>
+                  <div className="top-bar-title">
+                    {showDoodle ?
+                      (<>
+                        <Link to="/" title={doodleData['Description']} className="doodle-link icon"
+                          style={{ backgroundImage: `url(${doodleData['ImageSquare']}) ` }}>
+                          {BACK_TO_HOME}
+                        </Link>
+                        <Link to="/" title={doodleData['Description']} className="doodle-link bigger-image"
+                          style={{ backgroundImage: `url(${doodleData['Image']}) ` }}>
+                          {BACK_TO_HOME}
+                        </Link>
+                      </>) :
+                      (<Link to="/" className="transparent-color">{BACK_TO_HOME}</Link>)
+                    }
+                  </div>
                   <div className="top-bar-menu">
                     <div id="responsive-menu">
                       <div className="top-bar-left">
@@ -345,7 +346,7 @@ class Header extends React.PureComponent {
   }
 }
 
-const mapStateToProps = ({}) => ({})
+const mapStateToProps = ({ fullScreenMode }) => ({ fullScreenMode })
 
 const mapDispatchToProps = {
   toggleSettingsPanel,

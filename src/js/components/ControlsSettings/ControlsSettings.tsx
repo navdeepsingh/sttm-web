@@ -1,16 +1,19 @@
-import React from 'react';
-import Collapsible from 'react-collapsible';
+import React, { useEffect } from 'react';
+import ReactTooltip from 'react-tooltip';
 import Checkboxes, { Collection as CollectionProps } from '@/components/Checkboxes/Checkboxes';
 import ClickableListItem from './ClickableListItem';
 import Times from '../Icons/Times';
+import Accordion from '../Accordion';
 import { ADVANCED_SETTINGS, HEADER_SETTINGS, QUICK_SETTINGS, RESET_SETTING } from './ControlSettings';
 import { AlignLeftIcon, MinusIcon, PlusIcon, SplitViewIcon, GlobeIcon, LarivaarIcon, MicrophoneIcon, SolidArrowRight, DarkModeIcon, VishraamIcon, SteekIcon, AkhandPaathIcon, AutoPlayIcon, LarivaarAssistIcon, AlignCenterIcon, ParagraphIcon, VishraamStyleIcon, } from "../Icons/CustomIcons";
 import {
-  TEXTS,
   FONT_OPTIONS,
   VISRAAM,
 } from '../../constants';
 import { clearVisraamClass } from '@/util';
+import { useEscapeKeyEventHandler, useOnClickOutside } from "@/hooks";
+import SettingsTooltip from '../SettingsTooltip';
+
 
 const ControlsSettings = (props: any) => {
   const wrapperRef = React.useRef(null);
@@ -20,7 +23,6 @@ const ControlsSettings = (props: any) => {
   const resetSetting = RESET_SETTING(props);
   const {
     fontFamily,
-    resetDisplayOptions,
     changeFont,
     visraams,
     visraamSource,
@@ -29,19 +31,10 @@ const ControlsSettings = (props: any) => {
     settingsRef
   } = props;
 
-  React.useEffect(() => {
-    const handleClickOutside = (e: any) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target) && !settingsRef.current.contains(e.target)) {
-        closeSettingsPanel();
-      }
-    }
-    document.addEventListener('click', handleClickOutside)
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
-    }
-  }, [])
+  useOnClickOutside(settingsRef, () => closeSettingsPanel())
+  useEscapeKeyEventHandler(closeSettingsPanel)
 
-  React.useEffect(() => {
+  useEffect(() => {
     clearVisraamClass();
     document.body.classList[visraams ? 'add' : 'remove'](
       VISRAAM.CLASS_NAME,
@@ -135,43 +128,37 @@ const ControlsSettings = (props: any) => {
         )
     }
   }
-  const bakeSettings = (settingsObj: any) => {
+  const bakeSettings = (settingsObj: any, elementIndex: number) => {
     switch (settingsObj.type) {
       case 'header':
         return (
           <>
             <p className="settings-heading">{settingsObj.label}</p>
-            <button className="settings-times" onClick={settingsObj.action}><Times /></button>
+            <button className="settings-times" aria-label="close" onClick={settingsObj.action}><Times /></button>
           </>
         )
       case 'collapsible_item':
-        return (
-          <Collapsible
-            trigger={(
-              <button className="settings-item active-setting">
-                <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
-                <span className="settings-text">{settingsObj.label}</span>
-                <div className="flex-spacer" />
-                <span className="settings-chevron-icon">
-                  <SolidArrowRight />
-                </span>
-              </button>
-            )}>
-            <Checkboxes collections={settingsObj.collections} />
-          </Collapsible>
-        )
+        return <Accordion
+          ariaLabel={settingsObj.label}
+          title={(<span className="settings-item active-setting">
+            <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
+            <span className="settings-text">{settingsObj.label}</span>
+          </span>)}
+          content={<Checkboxes collections={settingsObj.collections} />}
+          index={elementIndex}
+        />
       case 'icon-toggle':
         return (
           <>
-            <button className="font-size-control" onClick={settingsObj.controlsList[0].action}><MinusIcon className="minus-icon" /></button>
+            <button className="font-size-control" onClick={settingsObj.controlsList[0].action} aria-label={`decrease ${settingsObj.label}`}><MinusIcon className="minus-icon" /></button>
             <span>{settingsObj.label}</span>
-            <button className="font-size-control" onClick={settingsObj.controlsList[2].action}><PlusIcon className="plus-icon" /></button>
+            <button className="font-size-control" onClick={settingsObj.controlsList[2].action} aria-label={`increase ${settingsObj.label}`}><PlusIcon className="plus-icon" /></button>
           </>
         )
       case 'font-update':
         return (
           <>
-            <button className="font-size-control" onClick={settingsObj.controlsList[0].action}><MinusIcon className="minus-icon" /></button>
+            <button className="font-size-control" onClick={settingsObj.controlsList[0].action} aria-label="decrease font size"><MinusIcon className="minus-icon" /></button>
             <select
               className="font-family-dropdown"
               value={fontFamily}
@@ -183,32 +170,26 @@ const ControlsSettings = (props: any) => {
                 </option>
               ))}
             </select>
-            <button className="font-size-control" onClick={settingsObj.controlsList[2].action}><PlusIcon className="plus-icon" /></button>
+            <button className="font-size-control" onClick={settingsObj.controlsList[2].action} aria-label="increase font size"><PlusIcon className="plus-icon" /></button>
           </>
         )
       case 'toggle-option':
         return (
-          <button className={`settings-item ${settingsObj.checked ? 'active-setting' : ''}`} onClick={settingsObj.action}>
+          <button className={`settings-item ${settingsObj.checked ? 'active-setting' : ''}`} onClick={settingsObj.action} aria-label={`toggle ${settingsObj.label}`}>
             <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
             <span className="settings-text">{settingsObj.label}</span>
           </button>
         )
       case 'collapsible_formatting_item':
-        return (
-          <Collapsible
-            trigger={(
-              <div className="settings-item active-setting">
-                <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
-                <span className="settings-text">{settingsObj.label}</span>
-                <div className="flex-spacer" />
-                <span className="settings-chevron-icon">
-                  <SolidArrowRight />
-                </span>
-              </div>
-            )}>
-            <ClickableListItem controlsList={settingsObj} />
-          </Collapsible>
-        )
+        return <Accordion
+          ariaLabel={settingsObj.label}
+          title={(<div className="settings-item active-setting">
+            <span className="settings-action-icon">{renderIcon(settingsObj.label)}</span>
+            <span className="settings-text">{settingsObj.label}</span>
+          </div>)}
+          content={<ClickableListItem controlsList={settingsObj} />}
+          index={elementIndex}
+        />
       case 'label-options':
         return (
           <div className="settings-item">
@@ -219,9 +200,12 @@ const ControlsSettings = (props: any) => {
                 settingsObj.collections?.map((collection: CollectionProps, index: number) => (
                   <button
                     key={index}
+                    aria-label={collection.label}
                     className={`settings-action-icon ${collection.checked ? 'active-setting' : ''}`}
                     onClick={collection.action}
-                  >{renderIcon(collection.label)}</button>
+                  >
+                    {renderIcon(collection.label)}
+                  </button>
                 ))
               }
             </div>
@@ -255,10 +239,11 @@ const ControlsSettings = (props: any) => {
           <div className="settings-2cols">
             {
               settingsObj.collections?.map((collection: CollectionProps, index: number) => (
-                <div key={index} className={`settings-item ${collection.checked ? 'active-setting' : ''}`} onClick={collection.action}>
+                <div key={index} data-tip data-for={collection.label} className={`settings-item ${collection.checked ? 'active-setting' : ''}`} onClick={collection.action}>
                   <span className="settings-text">{collection.label}</span>
                   <div className="flex-spacer"></div>
                   <span className="settings-action-icon">{renderIcon(collection.label)}</span>
+                  <SettingsTooltip referenceName={collection.label} tooltip={collection.tooltip} extraSettings={{ place: 'top', delayShow: 1000 }} />
                 </div>
               ))
             }
@@ -277,7 +262,7 @@ const ControlsSettings = (props: any) => {
                 data-cy={element.label}
                 key={`settings-${i}`}
                 className={`settings-header ${element.type}`}>
-                {bakeSettings(element)}
+                {bakeSettings(element, i)}
               </div>
             )
           }
@@ -290,9 +275,12 @@ const ControlsSettings = (props: any) => {
             return (
               <div
                 data-cy={element.label}
+                data-tip
+                data-for={element.label}
                 key={`settings-${i}`}
                 className={`${element.type}`}>
-                {bakeSettings(element)}
+                {bakeSettings(element, i)}
+                <SettingsTooltip referenceName={element.label} tooltip={element.tooltip} extraSettings={{ place: 'top', delayShow: 1000 }} />
               </div>
             )
           }
@@ -312,7 +300,7 @@ const ControlsSettings = (props: any) => {
                     data-cy={element.label}
                     key={`settings-${i}`}
                     className={`settings-item font-item ${element.type}`}>
-                    {bakeSettings(element)}
+                    {bakeSettings(element, i)}
                   </div>
                 )
               }
@@ -324,7 +312,7 @@ const ControlsSettings = (props: any) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
