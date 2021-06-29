@@ -106,7 +106,7 @@ const Menu = ({ isHome }) => {
               </Link>
           </li>
 
-          <li data-cy="index" className={`${toggleDropdownIndex ? 'opened' : ''} submenu`}>
+          <li className={`${toggleDropdownIndex ? 'opened' : ''} submenu`}>
             <button name="index-btn" onClick={toggleDropdownHandlerIndex} ref={dropTogglerRefIndex}>
               <span>
                 Index

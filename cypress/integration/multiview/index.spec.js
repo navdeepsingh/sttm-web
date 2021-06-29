@@ -1,6 +1,6 @@
 describe('Multi View', () => {
   describe('Index page', () => {
-    const multiView = '.multiple-shabads-display'
+    const multiView = '[data-cy=multiple-shabads-display]'
     const multiViewButton = '[data-cy=multi-view-button]'
     const addShabadButton = '[data-cy=add-shabad]'
     const deleteShabadButton = '[data-cy=delete-shabad]'

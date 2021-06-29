@@ -6,7 +6,6 @@ describe('Navigation', () => {
     const { SGGS, DG } = raagIndices;
     const totalSggsRows = SGGS.indices.length;
     const totalDgRows = DG.indices.length;
-    const totalAmritKeertanRows = 113;
 
     const firstSggsRaagName = SGGS.indices[0].name;
     const lastSggsRaagName = SGGS.indices[totalSggsRows - 1].name;
@@ -19,39 +18,70 @@ describe('Navigation', () => {
       cy.get('.toast-notification-close-button')
         .click();
 
-      cy.get('li[data-cy=index] a')
+      cy.get('[data-cy=index]')
         .click();
     })
 
-    it('should open with indexes of SGGS, SDGS, Amrit Keertan', () => {
+    it('should open with indexes of SGGS, SDGS', () => {
 
       // SGGS Granth
-      cy.get('.granthIndex')
+      cy.get('.baniIndex').children('li')
         .eq(0)
-        .find('tbody tr')
+        .find('ul li')
         .as('sggsRows')
 
       cy.get('@sggsRows').should('have.length', totalSggsRows)
-      cy.get('@sggsRows').first().find('td').first().should('contain.text', firstSggsRaagName);
-      cy.get('@sggsRows').last().find('td').first().should('contain.text', lastSggsRaagName);
+      cy.get('@sggsRows').first().find('a').should('contain.text', firstSggsRaagName);
+      cy.get('@sggsRows').last().find('a').should('contain.text', lastSggsRaagName);
 
       // DG Granth
-      cy.get('.granthIndex')
+      cy.get('.baniIndex').children('li')
         .eq(1)
-        .find('tbody tr').as('dgRows')
+        .find('ul li')
+        .as('dgRows')
 
       cy.get('@dgRows').should('have.length', totalDgRows)
-      cy.get('@dgRows').first().find('td').first().should('contain.text', firstDgRaagName);
-      cy.get('@dgRows').last().find('td').first().should('contain.text', lastDgRaagName);
+      cy.get('@dgRows').first().find('a').should('contain.text', firstDgRaagName);
+      cy.get('@dgRows').last().find('a').should('contain.text', lastDgRaagName);      
+    })
+
+    it("should open the Bhai Nand Lal Ji Vaaran page with all chapters", () => {
+      const totalNandLalVaaranRows = 7;
+      // Bhai Nand Lal Ji Vaaran
+      cy.get('.baniIndex').children('li')
+        .eq(2)
+        .click()
+        .then(() => {
+          
+          cy.get('.granthIndex')
+          .find('tbody tr')
+          .as('nandLalVaaranRows')
+
+          cy.get('@nandLalVaaranRows').should('have.length', totalNandLalVaaranRows);
+          cy.get('@nandLalVaaranRows').first().find('td a').should('contain.text', 'Divan-e-Goya: Ghazals');
+          cy.get('@nandLalVaaranRows').last().find('td a').should('contain.text', 'Tankah Nama');
+
+        })      
+    })
+
+    it("should open the Amrit Keertan page with all chapters", () => {     
+      const totalAmritKeertanRows = 113;  
 
       // AmritKeertan Granth
-      cy.get('.granthIndex')
-        .eq(2)
-        .find('tbody tr').as('amritKeertanRows')
+      cy.get('.baniIndex').children('li')
+        .eq(3)
+        .click()
+        .then(() => {
+          
+          cy.get('.granthIndex')
+          .find('tbody tr')
+          .as('amritKeertanRows')
 
-      cy.get('@amritKeertanRows').should('have.length', totalAmritKeertanRows);
-      cy.get('@amritKeertanRows').first().find('td summary').should('contain.text', 'ਦੁਇ ਕਰ ਜੋੜਿ ਕਰਉ ਅਰਦਾਸਿ ॥');
-      cy.get('@amritKeertanRows').last().find('td summary').should('contain.text', 'ਰਹਿਣੀ ਰਹੈ ਸੋਈ ਸਿਖ ਮੇਰਾ');
+          cy.get('@amritKeertanRows').should('have.length', totalAmritKeertanRows);
+          cy.get('@amritKeertanRows').first().find('td summary').should('contain.text', 'ਦੁਇ ਕਰ ਜੋੜਿ ਕਰਉ ਅਰਦਾਸਿ ॥');
+          cy.get('@amritKeertanRows').last().find('td summary').should('contain.text', 'ਰਹਿਣੀ ਰਹੈ ਸੋਈ ਸਿਖ ਮੇਰਾ');
+
+        })
     })
 
 
@@ -86,4 +116,6 @@ describe('Navigation', () => {
       })
     })
   })
+
+  
 })

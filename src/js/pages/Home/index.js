@@ -293,7 +293,7 @@ class Home extends React.PureComponent {
                   <div className="fp-buttons-text">Multi-View</div>
                 </div>
                 <div className="">
-                  <button className="fp-buttons apps-item" onClick={() => window.location.href = '/index'}>
+                  <button data-cy="index" className="fp-buttons apps-item" onClick={() => window.location.href = '/index'}>
                     <div className="apps-icon-container">
                       <IndexIcon />
                     </div>

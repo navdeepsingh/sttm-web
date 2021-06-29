@@ -3,9 +3,9 @@ const getRandomNumber = (max) => Math.floor(Math.random() * Math.floor(max));
 Cypress.Commands.add('checkGranthIndices', ({ granthIndex, indices, source }) => {
   const randomIndex = getRandomNumber(indices.length);
 
-  cy.get('.granthIndex')
+  cy.get('.baniIndex')
     .eq(granthIndex)
-    .find('tbody tr')
+    .find('ul li')
     .as('granthRows')
 
   cy.get('@granthRows')
