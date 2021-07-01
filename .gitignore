@@ -13,3 +13,6 @@ yarn.lock
 .idea/
 cypress/screenshots/**/*.*
 cypress/videos/**/*.*
+.env
+coverage
+.nyc_output

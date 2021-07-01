@@ -3,10 +3,16 @@ const getRandomNumber = (max) => Math.floor(Math.random() * Math.floor(max));
 Cypress.Commands.add('checkGranthIndices', ({ granthIndex, indices, source }) => {
   const randomIndex = getRandomNumber(indices.length);
 
-  cy.get('.baniIndex')
+  cy.get('.baniIndex').children('li')
     .eq(granthIndex)
+    .click()
     .find('ul li')
-    .as('granthRows')
+    .first()
+    .click()
+
+  cy.get('.granthIndex')
+  .find('tbody tr')
+  .as('granthRows')
 
   cy.get('@granthRows')
     .find('td a')
@@ -25,9 +31,13 @@ Cypress.Commands.add('checkGranthIndices', ({ granthIndex, indices, source }) =>
 });
 
 Cypress.Commands.add('loadAmritKeertanFirstChapter', () => {
+
+  cy.get('.baniIndex').children('li')
+    .eq(3)
+    .click()
+
   // Amrit Keertan
   cy.get('.granthIndex')
-    .eq(2)
     .find('tbody tr')
     .as('amritKeertanRows')
 

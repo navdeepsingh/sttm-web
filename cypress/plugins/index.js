@@ -24,6 +24,8 @@ module.exports = (on, config) => {
       return launchOptions
     }
   });
+  require('@cypress/code-coverage/task')(on, config)
+  on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
 
   const isProduction = process.env.NODE_ENV === 'production';
   config.env.PROTOCOL = isProduction ? 'https' : 'http'

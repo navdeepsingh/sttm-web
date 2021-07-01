@@ -17,6 +17,7 @@
 import './index-page.commands';
 import './sundar-gutka.commands';
 import './commands';
+import '@cypress/code-coverage/support'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

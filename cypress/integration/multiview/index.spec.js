@@ -26,7 +26,7 @@ describe('Multi View', () => {
       cy.get('#search')
         .type('mlsp')
         .then(() => {
-          cy.get(`.search-result li:first-child ${addShabadButton}`).as('result')  
+          cy.get(`.search-result li:first-child ${addShabadButton}`, { timeout: 10000 }).should('be.visible').as('result');
 
           cy.get('@result').click().then(() => {
             cy.get(`${multiView} ul li`).should('have.length', 1)  

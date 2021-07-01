@@ -85,16 +85,18 @@ describe('Navigation', () => {
     })
 
 
-    it('should open correct shabads on clicking ang ranges', () => {
+    it('should open correct shabads on clicking ang ranges - SGGS', () => {
       const sggsIndices = SGGS.indices.map(raagObj => raagObj.pages).flat();
-      const dgIndices = DG.indices.map(raagObj => raagObj.pages).flat();
-
+      
       // SGGS Granth
-      cy.checkGranthIndices({ granthIndex: 0, source: 'G', indices: sggsIndices });
+      cy.checkGranthIndices({ granthIndex: 0, source: 'G', indices: sggsIndices });      
+    });
+    
+    it('should open correct shabads on clicking ang ranges - DGS', () => {
+      const dgIndices = DG.indices.map(raagObj => raagObj.pages).flat();
 
       // DG Granth
       cy.checkGranthIndices({ granthIndex: 1, source: 'D', indices: dgIndices })
-
     });
 
     context('Amrit Keertan', () => {

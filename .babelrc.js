@@ -24,6 +24,9 @@ const presets = [
 
 module.exports = {
   env: {
+    test: {
+      plugins: ['istanbul']
+    },
     production: {
       presets: presets.map(preset =>
         preset[0] !== '@babel/preset-env'
